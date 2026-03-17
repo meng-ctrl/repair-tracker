@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>维修工作记录</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2196F3">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 登录页面 -->
+        <div id="login-page" class="page">
+            <div class="login-box">
+                <h1>🦐 维修工作记录</h1>
+                <div class="form-group">
+                    <input type="text" id="username" placeholder="请输入用户名" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="请输入密码" />
+                </div>
+                <div class="form-group">
+                    <select id="role">
+                        <option value="admin">管理员（可查看全部）</option>
+                        <option value="full">完全授权（可查看全部）</option>
+                        <option value="partial" selected>部分授权（仅看自己）</option>
+                    </select>
+                </div>
+                <button class="btn-primary" onclick="login()">登录</button>
+                <button class="btn-secondary" onclick="showRegister()">注册新账号</button>
+            </div>
+        </div>
+
+        <!-- 注册页面 -->
+        <div id="register-page" class="page hidden">
+            <div class="login-box">
+                <h1>注册账号</h1>
+                <div class="form-group">
+                    <input type="text" id="reg-username" placeholder="用户名" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="reg-password" placeholder="密码" />
+                </div>
+                <div class="form-group">
+                    <input type="text" id="reg-nickname" placeholder="昵称" />
+                </div>
+                <button class="btn-primary" onclick="register()">注册</button>
+                <button class="btn-secondary" onclick="showLogin()">返回登录</button>
+            </div>
+        </div>
+
+        <!-- 主页面 -->
+        <div id="main-page" class="page hidden">
+            <header class="header">
+                <div class="header-left">
+                    <span id="user-info"></span>
+                </div>
+                <div class="header-right">
+                    <button class="btn-icon" onclick="syncToNAS()" title="同步到NAS">☁️</button>
+                    <button class="btn-icon" onclick="showSettings()" title="设置">⚙️</button>
+                    <button class="btn-icon" onclick="logout()" title="退出">🚪</button>
+                </div>
+            </header>
+
+            <div class="toolbar">
+                <button class="btn-primary" onclick="showAddOrder()">+ 新建维修单</button>
+            </div>
+
+            <div id="orders-container" class="orders-container">
+                <!-- 维修单列表 -->
+            </div>
+        </div>
+
+        <!-- 维修单详情/编辑 -->
+        <div id="order-page" class="page hidden">
+            <header class="header">
+                <button class="btn-icon" onclick="showMain()">← 返回</button>
+                <span>维修单详情</span>
+                <button class="btn-icon" onclick="shareOrder()">📤 分享</button>
+            </header>
+
+            <div class="order-content">
+                <div class="form-group">
+                    <label>维修单标题</label>
+                    <input type="text" id="order-title" placeholder="如：iPhone 13 屏幕维修" />
+                </div>
+                <div class="form-group">
+                    <label>客户姓名</label>
+                    <input type="text" id="order-customer" placeholder="客户姓名" />
+                </div>
+                <div class="form-group">
+                    <label>联系方式</label>
+                    <input type="text" id="order-contact" placeholder="电话/微信" />
+                </div>
+
+                <div class="flow-section">
+                    <h3>维修流程 <button class="btn-small" onclick="addFlowStep()">+ 添加步骤</button></h3>
+                    <div id="flow-steps">
+                        <!-- 流程步骤 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="toolbar fixed">
+                <button class="btn-primary" onclick="saveOrder()">保存维修单</button>
+                <button class="btn-danger" onclick="deleteOrder()" id="delete-btn">删除</button>
+            </div>
+        </div>
+
+        <!-- 设置页面 -->
+        <div id="settings-page" class="page hidden">
+            <header class="header">
+                <button class="btn-icon" onclick="showMain()">← 返回</button>
+                <span>设置</span>
+            </header>
+
+            <div class="settings-content">
+                <div class="setting-item">
+                    <label>NAS WebDAV 地址</label>
+                    <input type="text" id="nas-url" placeholder="https://your-nas.com/webdav/" />
+                </div>
+                <div class="setting-item">
+                    <label>NAS 用户名</label>
+                    <input type="text" id="nas-username" placeholder="用户名" />
+                </div>
+                <div class="setting-item">
+                    <label>NAS 密码</label>
+                    <input type="password" id="nas-password" placeholder="密码" />
+                </div>
+                <div class="setting-item">
+                    <label>自动同步</label>
+                    <label class="switch">
+                        <input type="checkbox" id="auto-sync">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button class="btn-primary" onclick="saveSettings()">保存设置</button>
+                <button class="btn-secondary" onclick="exportData()">导出数据</button>
+                <button class="btn-secondary" onclick="importData()">导入数据</button>
+                <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(this)">
+            </div>
+        </div>
+
+        <!-- 添加流程步骤弹窗 -->
+        <div id="flow-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>添加流程步骤</h3>
+                <div class="form-group">
+                    <label>步骤标题</label>
+                    <select id="flow-title-select">
+                        <option value="开始检测">开始检测</option>
+                        <option value="确定故障原因待客户回复">确定故障原因待客户回复</option>
+                        <option value="维修中">维修中</option>
+                        <option value="等待配件中">等待配件中</option>
+                        <option value="维修完成待提货">维修完成待提货</option>
+                        <option value="交易完成">交易完成</option>
+                        <option value="自定义">自定义...</option>
+                    </select>
+                    <input type="text" id="flow-title-custom" placeholder="自定义标题" style="display:none" />
+                </div>
+                <div class="form-group">
+                    <label>描述</label>
+                    <textarea id="flow-desc" rows="3" placeholder="描述内容..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>图片/视频</label>
+                    <input type="file" id="flow-media" accept="image/*,video/*" multiple />
+                    <div id="media-preview"></div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn-primary" onclick="confirmFlowStep()">确认</button>
+                    <button class="btn-secondary" onclick="closeFlowModal()">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分享弹窗 -->
+        <div id="share-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>分享维修单</h3>
+                <p>选择分享方式：</p>
+                <button class="btn-primary" onclick="copyShareLink()">📋 复制链接</button>
+                <button class="btn-secondary" onclick="generateShareCode()">🔢 生成分享码</button>
+                <button class="btn-secondary" onclick="closeShareModal()">关闭</button>
+            </div>
+        </div>
+
+        <!-- 用户管理（管理员） -->
+        <div id="users-page" class="page hidden">
+            <header class="header">
+                <button class="btn-icon" onclick="showMain()">← 返回</button>
+                <span>用户管理</span>
+                <button class="btn-icon" onclick="showAddUser()">+ 添加</button>
+            </header>
+            <div id="users-list"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

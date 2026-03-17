@@ -1,0 +1,614 @@
+/* 维修工作记录 App 样式 */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #2196F3;
+    --primary-dark: #1976D2;
+    --success: #4CAF50;
+    --warning: #FF9800;
+    --danger: #F44336;
+    --gray: #9E9E9E;
+    --light-gray: #F5F5F5;
+    --border: #E0E0E0;
+    --text: #333;
+    --text-light: #666;
+    --bg: #FAFAFA;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+.page {
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 登录页面 */
+#login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.login-box {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 360px;
+}
+
+.login-box h1 {
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 22px;
+    color: var(--primary);
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* 按钮样式 */
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 12px;
+    background: var(--light-gray);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+/* 头部 */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-left, .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 工具栏 */
+.toolbar {
+    padding: 16px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+}
+
+.toolbar.fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    gap: 10px;
+    padding: 12px 16px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+
+.toolbar .btn-primary, .toolbar .btn-danger {
+    flex: 1;
+    margin: 0;
+}
+
+/* 维修单列表 */
+.orders-container {
+    padding: 16px;
+}
+
+/* 月份分组 */
+.month-group {
+    margin-bottom: 16px;
+}
+
+.month-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--light-gray);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.month-header::before {
+    content: '▶';
+    margin-right: 10px;
+    font-size: 12px;
+    transition: transform 0.3s;
+}
+
+.month-header.collapsed::before {
+    transform: rotate(-90deg);
+}
+
+.month-header .count {
+    margin-left: auto;
+    background: var(--primary);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.month-orders {
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.month-orders.collapsed {
+    max-height: 0 !important;
+}
+
+/* 维修单卡片 */
+.order-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.order-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.order-card-status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-检测中 { background: #FFF3E0; color: #E65100; }
+.status-待回复 { background: #FFF3E0; color: #FF9800; }
+.status-维修中 { background: #E3F2FD; color: #1976D2; }
+.status-等待配件 { background: #F3E5F5; color: #7B1FA2; }
+.status-待提货 { background: #E8F5E9; color: #388E3C; }
+.status-已完成 { background: #E8F5E9; color: #4CAF50; }
+
+.order-card-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-light);
+}
+
+.order-card-flow {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-light);
+}
+
+.flow-progress {
+    display: flex;
+    gap: 4px;
+    margin-left: 10px;
+}
+
+.flow-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: white;
+}
+
+.flow-dot.active {
+    background: var(--primary);
+}
+
+.flow-dot.completed {
+    background: var(--success);
+}
+
+/* 维修单详情 */
+.order-content {
+    padding: 16px;
+}
+
+.flow-section {
+    margin-top: 24px;
+}
+
+.flow-section h3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.flow-step {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.flow-step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.flow-step-title {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.flow-step-time {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.flow-step-desc {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.flow-step-media {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.flow-step-media img, .flow-step-media video {
+    max-width: 120px;
+    max-height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.flow-step-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.flow-step-actions button {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* 设置页面 */
+.settings-content {
+    padding: 16px;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.setting-item label {
+    font-weight: 500;
+}
+
+.setting-item input[type="text"],
+.setting-item input[type="password"] {
+    width: 60%;
+    padding: 8px;
+}
+
+/* 开关 */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border);
+    transition: 0.4s;
+    border-radius: 28px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+/* 弹窗 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-content h3 {
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-buttons button {
+    flex: 1;
+}
+
+/* 媒体预览 */
+#media-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+#media-preview img, #media-preview video {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* 用户列表 */
+#users-list {
+    padding: 16px;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 600;
+}
+
+.user-role {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.user-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* 动画 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.order-card, .flow-step {
+    animation: fadeIn 0.3s ease;
+}
+
+/* 空状态 */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-light);
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+/* Toast 提示 */
+#toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+#toast.show {
+    opacity: 1;
+}
+
+/* 响应式 */
+@media (min-width: 768px) {
+    .login-box {
+        padding: 40px;
+    }
+    
+    .order-card {
+        padding: 20px;
+    }
+}
