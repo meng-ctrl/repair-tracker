@@ -52,6 +52,11 @@ function initDB() {
                 database.createObjectStore('users', { keyPath: 'username' });
             }
             
+            // 邀请码表
+            if (!database.objectStoreNames.contains('invite_codes')) {
+                database.createObjectStore('invite_codes', { keyPath: 'code' });
+            }
+            
             // 维修单表
             if (!database.objectStoreNames.contains('orders')) {
                 const orderStore = database.createObjectStore('orders', { keyPath: 'id' });
@@ -98,6 +103,7 @@ async function register() {
     const username = document.getElementById('reg-username').value.trim();
     const password = document.getElementById('reg-password').value.trim();
     const nickname = document.getElementById('reg-nickname').value.trim();
+    const inviteCode = document.getElementById('reg-invite-code')?.value.trim();
     
     if (!username || !password) {
         showToast('请填写完整信息');
@@ -111,8 +117,27 @@ async function register() {
         return;
     }
     
-    // 第一个注册的是管理员
+    // 验证邀请码
     const allUsers = await dbGetAll('users');
+    if (allUsers.length > 0) {
+        // 需要邀请码
+        if (!inviteCode) {
+            showToast('请输入邀请码');
+            return;
+        }
+        const validCode = await dbGet('invite_codes', inviteCode);
+        if (!validCode || validCode.used) {
+            showToast('邀请码无效或已使用');
+            return;
+        }
+        // 标记邀请码已使用
+        validCode.used = true;
+        validCode.usedBy = username;
+        validCode.usedAt = Date.now();
+        await dbPut('invite_codes', validCode);
+    }
+    
+    // 第一个注册的是管理员
     const role = allUsers.length === 0 ? 'admin' : 'partial';
     
     // 创建用户
@@ -204,6 +229,58 @@ async function saveSettings() {
     
     showToast('设置已保存');
     showMain();
+}
+
+// ============ 邀请码管理 ============
+async function generateInviteCode() {
+    if (currentUser.loginRole !== 'admin' && currentUser.role !== 'admin') {
+        showToast('需要管理员权限');
+        return;
+    }
+    
+    const code = document.getElementById('new-invite-code').value.trim();
+    if (!code) {
+        showToast('请输入邀请码');
+        return;
+    }
+    
+    const exists = await dbGet('invite_codes', code);
+    if (exists) {
+        showToast('邀请码已存在');
+        return;
+    }
+    
+    await dbPut('invite_codes', {
+        code: code,
+        createdBy: currentUser.username,
+        createdAt: Date.now(),
+        used: false
+    });
+    
+    showToast('邀请码已生成: ' + code);
+    document.getElementById('new-invite-code').value = '';
+    showInviteCodes();
+}
+
+async function showInviteCodes() {
+    if (currentUser.loginRole !== 'admin' && currentUser.role !== 'admin') {
+        showToast('需要管理员权限');
+        return;
+    }
+    
+    const codes = await dbGetAll('invite_codes');
+    const container = document.getElementById('invite-codes-list');
+    
+    if (codes.length === 0) {
+        container.innerHTML = '<p style="color:#999">暂无邀请码</p>';
+        return;
+    }
+    
+    container.innerHTML = codes.map(c => `
+        <div style="padding:8px;background:#f5f5f5;margin-bottom:8px;border-radius:4px;">
+            <strong>${c.code}</strong> - ${c.used ? '已使用 by ' + c.usedBy : '未使用'}
+        </div>
+    `).join('');
 }
 
 // ============ 维修单管理 ============

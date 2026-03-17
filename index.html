@@ -46,6 +46,9 @@
                 <div class="form-group">
                     <input type="text" id="reg-nickname" placeholder="昵称" />
                 </div>
+                <div class="form-group">
+                    <input type="text" id="reg-invite-code" placeholder="邀请码（必填）" />
+                </div>
                 <button class="btn-primary" onclick="register()">注册</button>
                 <button class="btn-secondary" onclick="showLogin()">返回登录</button>
             </div>
@@ -137,6 +140,19 @@
                     </label>
                 </div>
                 <button class="btn-primary" onclick="saveSettings()">保存设置</button>
+                
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+                
+                <h3>邀请码管理</h3>
+                <div class="form-group">
+                    <input type="text" id="new-invite-code" placeholder="输入新邀请码" />
+                </div>
+                <button class="btn-secondary" onclick="generateInviteCode()">生成邀请码</button>
+                <button class="btn-secondary" onclick="showInviteCodes()">查看已有邀请码</button>
+                <div id="invite-codes-list" style="margin-top:10px;"></div>
+                
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+                
                 <button class="btn-secondary" onclick="exportData()">导出数据</button>
                 <button class="btn-secondary" onclick="importData()">导入数据</button>
                 <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(this)">
