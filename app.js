@@ -303,6 +303,7 @@ async function loadOrders() {
     orders.sort((a, b) => b.createdAt - a.createdAt);
     
     renderOrders(orders);
+    renderStats(orders);
 }
 
 function renderOrders(orders) {
@@ -894,4 +895,48 @@ async function editUserRole(username) {
         showToast('权限已更新');
         loadUsers();
     }
+}
+
+// ============ 统计卡片 ============
+function renderStats(orders) {
+    const total = orders.length;
+    const pending = orders.filter(o => {
+        const status = o.flow && o.flow.length > 0 ? o.flow[o.flow.length - 1].title : '';
+        return !status.includes('完成');
+    }).length;
+    const inProgress = orders.filter(o => {
+        const status = o.flow && o.flow.length > 0 ? o.flow[o.flow.length - 1].title : '';
+        return status.includes('维修') || status.includes('检测') || status.includes('配件');
+    }).length;
+    const completed = orders.filter(o => {
+        const status = o.flow && o.flow.length > 0 ? o.flow[o.flow.length - 1].title : '';
+        return status.includes('完成');
+    }).length;
+    
+    const container = document.getElementById('stats-container');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div class="stat-card stat-blue" onclick="filterOrders('all')">
+            <div class="stat-label">总修售单</div>
+            <div class="stat-value">${total}</div>
+        </div>
+        <div class="stat-card stat-yellow" onclick="filterOrders('pending')">
+            <div class="stat-label">待处理</div>
+            <div class="stat-value">${pending}</div>
+        </div>
+        <div class="stat-card stat-purple" onclick="filterOrders('inProgress')">
+            <div class="stat-label">进行中</div>
+            <div class="stat-value">${inProgress}</div>
+        </div>
+        <div class="stat-card stat-green" onclick="filterOrders('completed')">
+            <div class="stat-label">已完成</div>
+            <div class="stat-value">${completed}</div>
+        </div>
+    `;
+}
+
+function filterOrders(type) {
+    // 这里可以实现过滤功能，暂时只显示全部
+    showToast('显示: ' + (type === 'all' ? '全部' : type === 'pending' ? '待处理' : type === 'inProgress' ? '进行中' : '已完成'));
 }

@@ -7,17 +7,17 @@
 }
 
 :root {
-    --primary: #2196F3;
-    --primary-dark: #1976D2;
-    --success: #4CAF50;
-    --warning: #FF9800;
-    --danger: #F44336;
+    --primary: #3B82F6;
+    --primary-dark: #2563EB;
+    --success: #22C55E;
+    --warning: #EAB308;
+    --danger: #EF4444;
     --gray: #9E9E9E;
     --light-gray: #F5F5F5;
     --border: #E0E0E0;
     --text: #333;
     --text-light: #666;
-    --bg: #FAFAFA;
+    --bg: #F9FAFB;
 }
 
 body {
@@ -611,4 +611,38 @@ input:checked + .slider:before {
     .order-card {
         padding: 20px;
     }
+}
+
+/* 渐变色统计卡片 */
+.stat-card {
+    padding: 16px;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.stat-card:active {
+    transform: scale(0.98);
+}
+.stat-blue { background: var(--gradient-blue); }
+.stat-yellow { background: var(--gradient-yellow); }
+.stat-purple { background: var(--gradient-purple); }
+.stat-green { background: var(--gradient-green); }
+
+.stat-card .stat-label {
+    font-size: 12px;
+    opacity: 0.9;
+}
+.stat-card .stat-value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* 订单卡片优化 */
+.order-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
